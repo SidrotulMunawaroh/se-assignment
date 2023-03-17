@@ -1,0 +1,33 @@
+START
+DISPLAY "pilih salah satu 1. Meminjam Buku or 2. Mengembalikan Buku(1/2)"
+INPUT options
+IF option == 1
+    // Bagian proses peminjaman buku
+    INPUT id_anggota
+    INPUT id_buku
+    IF id_anggota exists AND id_buku exists THEN
+        FOR book IN bookLibrary
+	  IF book.id == id_buku THEN
+            SET status_buku = "dipinjam"
+            SET tanggal_peminjaman = today's date
+            SET tanggal_pengembalian = today's date + 7 days
+            ADD peminjaman(id_anggota, id_buku, status_buku, tanggal_peminjaman, tanggal_pengembalian) to database
+            PRINT "Buku berhasil dipinjam. Silakan kembali pada tanggal " + tanggal_pengembalian
+        ELSE
+            PRINT "Maaf, buku sedang tidak tersedia."
+        ENDIF
+    ELSE
+        PRINT "Maaf, data anggota atau buku tidak ditemukan."
+    ENDIF
+    
+IF option ==2
+    // Bagian proses pengambilan buku
+    INPUT id_peminjaman
+    IF id_peminjaman exists THEN
+        SET status_buku = "tersedia"
+        UPDATE peminjaman SET status_buku = status_buku WHERE id_peminjaman = id_peminjaman
+        PRINT "Buku telah dikembalikan. Terima kasih telah meminjam buku."
+    ELSE
+        PRINT "Maaf, data peminjaman tidak ditemukan."
+    ENDIF
+END
